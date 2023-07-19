@@ -1,6 +1,6 @@
 # Event-Search-and-Recommendation
 ## What does this project look like?
---
+
 <img width="1435" alt="Screen Shot 2023-07-18 at 7 14 56 PM" src="https://github.com/Mina314/Event-Search-and-Recommendation/assets/64227723/d14d7adc-98d0-4b5c-afb0-92000844a31b">
 
 ### Once you log in or register, you would able to see the events nearby and save an event as 'Favorite'. By the end, the recommendation will be made based on your favorite events.
