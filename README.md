@@ -12,6 +12,7 @@ Languages:
 
 Databases:
 * MySQL
+* MongoDB
 
 
 Development Environment:
@@ -19,6 +20,9 @@ Eclipse IDE
 
 API:
 RESTful APIs
+
+API testing:
+Postman
 
 Local web server deployment:
 Apache Tomcat
