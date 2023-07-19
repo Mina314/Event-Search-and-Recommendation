@@ -1,10 +1,11 @@
 package db;
 
 import db.mysql.MySQLConnection;
+import db.mongoDB.MongoDBConnection;
 
 public class DBConnectionFactory {
 
-	private static final String DEFAULT_DB = "mysql";
+	private static final String DEFAULT_DB = "mysql"; // Change the default to "mongodb" here
 
 	public static DBConnection getConnection(final String db) {
 		switch (db) {
@@ -12,7 +13,7 @@ public class DBConnectionFactory {
 			return (DBConnection) new MySQLConnection();
 		}
 		case "mongodb": {
-			return null;
+			return (DBConnection) new MongoDBConnection();
 		}
 		default:
 			break;
