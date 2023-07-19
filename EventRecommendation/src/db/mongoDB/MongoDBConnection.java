@@ -17,8 +17,7 @@ import com.mongodb.client.model.UpdateOptions;
 import db.DBConnection;
 import entity.Item;
 import entity.Item.*;
-import external.ExternalAPI;
-import external.ExternalAPIFactory;
+import external.TicketMasterAPI;
 
 public class MongoDBConnection implements DBConnection {
 	
@@ -63,31 +62,35 @@ public class MongoDBConnection implements DBConnection {
 		Set<String> favoriteItems = new HashSet<String>();
 		// db.users.find({user_id:1111})
 		FindIterable<Document> iterable = db.getCollection("users").find(eq("user_id", userId));
-		if (iterable.first().containsKey("favorite")) {
+		if (iterable.first() != null && iterable.first().containsKey("favorite")) {
 			@SuppressWarnings("unchecked")
 			List<String> list = (List<String>) iterable.first().get("favorite");
 			favoriteItems.addAll(list);
-		}
+			}
 		return favoriteItems;
 	}
 
 	@Override
 	public Set<Item> getFavoriteItems(String userId) {
-		Set<String> itemIds = getFavoriteItemIds(userId);
 		Set<Item> favoriteItems = new HashSet<>();
-		for (String itemId : itemIds) {
-			FindIterable<Document> iterable = db.getCollection("items").find(eq("item_id", itemId));
-			Document doc = iterable.first();
-			ItemBuilder builder = new ItemBuilder();
-			builder.setItemId(doc.getString("item_id"));
-			builder.setName(doc.getString("name"));
-			builder.setRating(doc.getDouble("rating"));
-			builder.setAddress(doc.getString("address"));
-			builder.setImageUrl(doc.getString("image_url"));
-			builder.setUrl(doc.getString("url"));
-			favoriteItems.add(builder.build());
-		}
-		return favoriteItems;
+				Set<String> itemIds = getFavoriteItemIds(userId);
+				for (String itemId : itemIds) {
+				FindIterable<Document> iterable = db.getCollection("items").find(eq("item_id",itemId));
+				if (iterable.first() != null) {
+				Document doc = iterable.first();
+				ItemBuilder builder = new ItemBuilder();
+				builder.setItemId(doc.getString("item_id"));
+				builder.setName(doc.getString("name"));
+				builder.setAddress(doc.getString("address"));
+				builder.setUrl(doc.getString("url"));
+				builder.setImageUrl(doc.getString("image_url"));
+				builder.setRating(doc.getDouble("rating"));
+				builder.setDistance(doc.getDouble("distance"));
+				builder.setCategories(getCategories(itemId));
+				favoriteItems.add(builder.build());
+				}
+				}
+				return favoriteItems;
 	}
 
 	@Override
@@ -95,7 +98,7 @@ public class MongoDBConnection implements DBConnection {
 		Set<String> categories = new HashSet<>();
 		FindIterable<Document> iterable = db.getCollection("items").find(eq("item_id", itemId));
 
-		if (iterable.first().containsKey("categories")) {
+		if (iterable.first() != null && iterable.first().containsKey("categories")){
 			@SuppressWarnings("unchecked")
 			List<String> list = (List<String>) iterable.first().get("categories");
 			categories.addAll(list);
@@ -105,11 +108,9 @@ public class MongoDBConnection implements DBConnection {
 
 	@Override
 	public List<Item> searchItems(double lat, double lon, String term) {
-		// Connect to external API
-		ExternalAPI api = ExternalAPIFactory.getExternalAPI();
-		List<Item> items = api.search(lat, lon, term);
+		TicketMasterAPI tmAPI = new TicketMasterAPI();
+		List<Item> items = tmAPI.search(lat, lon, term);
 		for (Item item : items) {
-			// Save the item into our own db.
 			saveItem(item);
 		}
 		return items;
@@ -136,18 +137,22 @@ public class MongoDBConnection implements DBConnection {
 
 	@Override
 	public String getFullname(String userId) {
-		FindIterable<Document> iterable = db.getCollection("users").find(new Document("user_id", userId));
-		Document document = iterable.first();
-		String firstName = document.getString("first_name");
-		String lastName = document.getString("last_name");
-		return firstName + " " + lastName;
+		FindIterable<Document> iterable = db.getCollection("users").find(eq("user_id", userId));
+		if (iterable.first() != null) {
+			Document doc = iterable.first();
+			return doc.getString("first_name") + " " + doc.getString("last_name");
+			}
+			return "";
 	}
 
 	@Override
 	public boolean verifyLogin(String userId, String password) {
-		FindIterable<Document> iterable = db.getCollection("users").find(new Document("user_id", userId));
-		Document document = iterable.first();
-		return document.getString("password").equals(password);
+		FindIterable<Document> iterable = db.getCollection("users").find(eq("user_id", userId));
+		if (iterable.first() != null) {
+			Document doc = iterable.first();
+			return doc.getString("password").equals(password);
+		}
+			return false;
 	}
 
 	@Override
