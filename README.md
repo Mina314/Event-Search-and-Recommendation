@@ -3,6 +3,7 @@ I developed an interactive web application using AJAX for real-time event search
 
 This project involved the utilization of Java servlets with RESTful APIs on Apache Tomcat, along with MySQL and MongoDB databases, to capture data from the TicketMaster API. Additionally, it integrated a content-based recommendation algorithm to provide personalized event suggestions.
 
+## Please feel free to try it out: http://ec2-54-159-194-202.compute-1.amazonaws.com/EventRecommendation/# 
 
 Languages:
 * Java (version 18)
