@@ -7,7 +7,7 @@ This project involved the utilization of Java servlets with RESTful APIs on Apac
 
 Languages:
 * Java (version 18)
-* JavaScript (This project uses Vanilla JS)
+* JavaScript (I used Vanilla JS in this project)
 * HTML
 * CSS
 
